@@ -178,7 +178,11 @@ namespace HidLibrary
         public async Task<HidDeviceData> ReadAsync(int timeout = 0)
         {
             var readDelegate = new ReadDelegate(Read);
+#if NET20 || NET35
+            return await Task<HidDeviceData>.Factory.StartNew(() => readDelegate.Invoke(timeout));
+#else
             return await Task<HidDeviceData>.Factory.FromAsync(readDelegate.BeginInvoke, readDelegate.EndInvoke, timeout, null);
+#endif
         }
 
         public HidReport ReadReport()
@@ -206,7 +210,11 @@ namespace HidLibrary
         public async Task<HidReport> ReadReportAsync(int timeout = 0)
         {
             var readReportDelegate = new ReadReportDelegate(ReadReport);
+#if NET20 || NET35
+            return await Task<HidReport>.Factory.StartNew(() => readReportDelegate.Invoke(timeout));
+#else
             return await Task<HidReport>.Factory.FromAsync(readReportDelegate.BeginInvoke, readReportDelegate.EndInvoke, timeout, null);
+#endif
         }
 
         /// <summary>
@@ -385,7 +393,11 @@ namespace HidLibrary
         public async Task<bool> WriteAsync(byte[] data, int timeout = 0)
         {
             var writeDelegate = new WriteDelegate(Write);
+#if NET20 || NET35
+            return await Task<bool>.Factory.StartNew(() => writeDelegate.Invoke(data, timeout));
+#else
             return await Task<bool>.Factory.FromAsync(writeDelegate.BeginInvoke, writeDelegate.EndInvoke, data, timeout, null);
+#endif
         }
 
         public bool WriteReport(HidReport report)
@@ -432,7 +444,11 @@ namespace HidLibrary
         public async Task<bool> WriteReportAsync(HidReport report, int timeout = 0)
         {
             var writeReportDelegate = new WriteReportDelegate(WriteReport);
+#if NET20 || NET35
+            return await Task<bool>.Factory.StartNew(() => writeReportDelegate.Invoke(report, timeout));
+#else
             return await Task<bool>.Factory.FromAsync(writeReportDelegate.BeginInvoke, writeReportDelegate.EndInvoke, report, timeout, null);
+#endif
         }
 
         public HidReport CreateReport()
